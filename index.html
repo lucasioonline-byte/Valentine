@@ -183,8 +183,8 @@
     <section class="result" id="result">
       <h2>YAY, Emmi! 🎉</h2>
 
-      <!-- Bild erscheint erst nach Yes -->
-      <img src="photo.jpg" alt="Us" class="photo" />
+      <!-- ⚠️ Dateiname hier MUSS exakt zu deiner GitHub-Datei passen -->
+      <img src="PHOTO.JPG" alt="Us" class="photo" />
 
       <img class="fireworks"
         src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
@@ -193,23 +193,19 @@
   </main>
 
   <script>
-    const APPLE_MUSIC_URL =
-      "https://music.apple.com/de/album/vanish/1842482929?i=1842483156&l=en-GB";
-
     const zone = document.getElementById("zone");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
     const result = document.getElementById("result");
     const hint = document.getElementById("hint");
 
+    /* Confetti */
     const confettiCanvas = document.getElementById("confettiCanvas");
-
     function resizeConfettiCanvas() {
       const dpr = Math.max(1, window.devicePixelRatio || 1);
       confettiCanvas.width = Math.floor(window.innerWidth * dpr);
       confettiCanvas.height = Math.floor(window.innerHeight * dpr);
     }
-
     resizeConfettiCanvas();
     window.addEventListener("resize", resizeConfettiCanvas);
 
@@ -230,6 +226,7 @@
         });
         if (Date.now() < end) requestAnimationFrame(frame);
       })();
+
       setTimeout(() => confettiInstance({
         particleCount: 300,
         spread: 140,
@@ -239,6 +236,7 @@
       }), 300);
     }
 
+    /* No button runs away */
     function clamp(n, min, max) {
       return Math.max(min, Math.min(max, n));
     }
@@ -283,20 +281,14 @@
 
     noBtn.addEventListener("click", e => e.preventDefault());
 
-   yesBtn.addEventListener("click", () => {
-  zone.style.display = "none";
-  hint.style.display = "none";
-  result.style.display = "block";
-
-  resizeConfettiCanvas();
-  fullScreenConfetti();
-
-  // Erst Animation + Bild zeigen, dann Apple Music öffnen
-  setTimeout(() => {
-    window.open(APPLE_MUSIC_URL, "_blank", "noopener,noreferrer");
-  }, 1000); // 1 Sekunde Delay
-});
-
+    /* YES click */
+    yesBtn.addEventListener("click", () => {
+      zone.style.display = "none";
+      hint.style.display = "none";
+      result.style.display = "block";
+      resizeConfettiCanvas();
+      fullScreenConfetti();
+    });
   </script>
 </body>
 </html>

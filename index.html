@@ -111,20 +111,19 @@
 
     .result h2 {
       font-size: clamp(30px, 4.5vw, 46px);
-      margin: 10px 0;
+      margin: 10px 0 12px;
     }
 
     .fireworks {
       width: min(380px, 90vw);
-      margin: 0 auto;
+      margin: 12px auto 0;
       display: block;
     }
 
-    /* PHOTO + WIGGLE */
     .photo {
       width: min(320px, 85%);
       border-radius: 18px;
-      margin: 14px auto 12px;
+      margin: 10px auto 10px;
       display: block;
       box-shadow: 0 14px 40px rgba(0,0,0,.18);
       animation: wiggle 1.2s ease-in-out both;
@@ -150,7 +149,8 @@
   <canvas id="confettiCanvas"></canvas>
 
   <main class="card">
-    <svg class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
+    <!-- Illustration -->
+    <svg id="art" class="art" viewBox="0 0 320 240" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="fur" x1="0" x2="1">
           <stop offset="0" stop-color="#f7c7a1"/>
@@ -171,7 +171,7 @@
       <circle cx="220" cy="130" r="8"/>
     </svg>
 
-    <h1>Emmi, will you be my Valentine?</h1>
+    <h1 id="title">Emmi, will you be my Valentine?</h1>
 
     <section class="button-zone" id="zone">
       <button id="yesBtn">Yes</button>
@@ -181,10 +181,10 @@
     <div class="hint" id="hint">Emmi, “No” seems a bit shy 😈</div>
 
     <section class="result" id="result">
-      <h2>YAY, Emmi! 🎉</h2>
+      <h2>YAY! 🎉</h2>
 
-      <!-- ⚠️ Dateiname hier MUSS exakt zu deiner GitHub-Datei passen -->
-      <img src="PHOTO.JPG" alt="Us" class="photo" />
+      <!-- Bild kommt per JS (damit der Dateiname nur an 1 Stelle steht) -->
+      <img id="photo" class="photo" alt="Us" />
 
       <img class="fireworks"
         src="https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif"
@@ -193,11 +193,32 @@
   </main>
 
   <script>
+    // ✅ HIER EINTRAGEN: exakt wie es bei GitHub in der Dateiliste steht (Groß-/Klein zählt!)
+    const IMAGE_FILE = "PHOTO.JPG"; // z.B. "photo.jpg" oder "PHOTO.JPG"
+
+    const art = document.getElementById("art");
+    const title = document.getElementById("title");
     const zone = document.getElementById("zone");
     const yesBtn = document.getElementById("yesBtn");
     const noBtn = document.getElementById("noBtn");
     const result = document.getElementById("result");
     const hint = document.getElementById("hint");
+    const photo = document.getElementById("photo");
+
+    // Bildquelle setzen
+    photo.src = IMAGE_FILE;
+
+    // Optional: wenn Bild nicht lädt, sieht man wenigstens warum
+    photo.onerror = () => {
+      photo.style.display = "none";
+      result.insertAdjacentHTML(
+        "beforeend",
+        `<p style="margin-top:12px;font-weight:700;">
+           Bild konnte nicht geladen werden.<br>
+           Prüfe Dateiname: <span style="font-family:ui-monospace, SFMono-Regular, Menlo, monospace;">${IMAGE_FILE}</span>
+         </p>`
+      );
+    };
 
     /* Confetti */
     const confettiCanvas = document.getElementById("confettiCanvas");
@@ -209,10 +230,7 @@
     resizeConfettiCanvas();
     window.addEventListener("resize", resizeConfettiCanvas);
 
-    const confettiInstance = confetti.create(confettiCanvas, {
-      resize: false,
-      useWorker: true
-    });
+    const confettiInstance = confetti.create(confettiCanvas, { resize:false, useWorker:true });
 
     function fullScreenConfetti() {
       const end = Date.now() + 1600;
@@ -237,9 +255,7 @@
     }
 
     /* No button runs away */
-    function clamp(n, min, max) {
-      return Math.max(min, Math.min(max, n));
-    }
+    function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
 
     let yesScale = 1;
     function growYes() {
@@ -254,17 +270,16 @@
       let dx = (b.left + b.width / 2) - px;
       let dy = (b.top + b.height / 2) - py;
       let mag = Math.hypot(dx, dy) || 1;
-      dx /= mag;
-      dy /= mag;
+      dx /= mag; dy /= mag;
 
       let newLeft = (b.left - z.left) + dx * 150;
-      let newTop  = (b.top - z.top) + dy * 150;
+      let newTop  = (b.top  - z.top ) + dy * 150;
 
       newLeft = clamp(newLeft, 0, z.width - b.width);
-      newTop  = clamp(newTop, 0, z.height - b.height);
+      newTop  = clamp(newTop , 0, z.height - b.height);
 
       noBtn.style.left = newLeft + "px";
-      noBtn.style.top = newTop + "px";
+      noBtn.style.top  = newTop  + "px";
       noBtn.style.transform = "none";
 
       growYes();
@@ -283,9 +298,15 @@
 
     /* YES click */
     yesBtn.addEventListener("click", () => {
+      // Alles vom Startscreen weg
+      art.style.display = "none";
+      title.style.display = "none";
       zone.style.display = "none";
       hint.style.display = "none";
+
+      // Ergebnis zeigen
       result.style.display = "block";
+
       resizeConfettiCanvas();
       fullScreenConfetti();
     });

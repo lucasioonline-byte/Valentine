@@ -283,16 +283,20 @@
 
     noBtn.addEventListener("click", e => e.preventDefault());
 
-    yesBtn.addEventListener("click", () => {
-      zone.style.display = "none";
-      hint.style.display = "none";
-      result.style.display = "block";
-      resizeConfettiCanvas();
-      fullScreenConfetti();
+   yesBtn.addEventListener("click", () => {
+  zone.style.display = "none";
+  hint.style.display = "none";
+  result.style.display = "block";
 
-      // Apple Music Song öffnen
-      window.open(APPLE_MUSIC_URL, "_blank");
-    });
+  resizeConfettiCanvas();
+  fullScreenConfetti();
+
+  // Erst Animation + Bild zeigen, dann Apple Music öffnen
+  setTimeout(() => {
+    window.open(APPLE_MUSIC_URL, "_blank", "noopener,noreferrer");
+  }, 1000); // 1 Sekunde Delay
+});
+
   </script>
 </body>
 </html>
